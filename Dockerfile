@@ -18,9 +18,9 @@ RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
 ENV PATH="/.venv/bin:$PATH"
 
 # Create and switch to a new user
-RUN useradd --create-home aws-exporter
-WORKDIR /home/aws-exporter
-USER aws-exporter
+RUN useradd --create-home aws-prometheus-exporter
+WORKDIR /home/aws-prometheus-exporter
+USER aws-prometheus-exporter
 
 # Install application into container
 COPY . .
