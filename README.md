@@ -17,6 +17,19 @@ Required AWS IAM permissions:
 
 - `ec2:DescribeSubnets`
 
+### Run
+
+Use the `ghcr.io/tx-pts-dai/aws-prometheus-exporter:vX.Y.Z` as image reference in your Kubernetes Pod / ECS Task Definition to pull and run the image. It is public.
+
+### Configuration
+
+Environment variables that can be used to modify the behaviour of the app:
+
+```bash
+SCRAPE_INTERVAL=60 # Interval at which scraping metrics happen
+AWS_REGION=eu-central-1 # AWS Region where to look for Subnets
+```
+
 ## Development
 
 After a normal docker build, set AWS credentials as environment variables so that you can run the `./docker-run-local.sh` script to start the app locally.

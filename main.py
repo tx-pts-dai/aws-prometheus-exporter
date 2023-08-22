@@ -27,8 +27,6 @@ class AwsExporter:
     def __init__(self):
         # Get configuration from environment variables
         self.region = os.getenv("AWS_REGION", "eu-central-1")
-        self.job = os.getenv("JOB", "aws_vpc_subnet")
-        self.instance = os.getenv("INSTANCE", "0")
         self.polling_interval_seconds = int(os.getenv("SCRAPE_INTERVAL", "60"))
 
         common_labels = ["vpc", "subnet", "name"]
