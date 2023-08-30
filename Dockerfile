@@ -15,6 +15,16 @@ COPY Pipfile .
 COPY Pipfile.lock .
 RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
 
+
+# Copy artifacts and run!
+FROM python:3.11-slim AS runtime
+# Setup env
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONFAULTHANDLER 1
+
+COPY --from=base /.venv /.venv
 ENV PATH="/.venv/bin:$PATH"
 
 # Create and switch to a new user
