@@ -1,0 +1,7 @@
+# Ignore everything (to keep it small :))
+*
+
+# Allow app files
+!/Pipfile
+!/Pipfile.lock
+!/**/*.py
