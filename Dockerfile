@@ -10,7 +10,8 @@ ENV PYTHONFAULTHANDLER 1
 RUN pip install pipenv
 RUN apt-get update && apt-get install -y --no-install-recommends gcc
 
-# Install python dependencies in /.venv
+# Install python dependencies in /home/build/.venv
+WORKDIR /home/build
 COPY Pipfile .
 COPY Pipfile.lock .
 RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
@@ -24,15 +25,14 @@ ENV LC_ALL C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONFAULTHANDLER 1
 
-COPY --from=base /.venv /.venv
-ENV PATH="/.venv/bin:$PATH"
-
 # Create and switch to a new user
-RUN useradd --create-home aws-prometheus-exporter
 WORKDIR /home/aws-prometheus-exporter
+RUN useradd --create-home aws-prometheus-exporter
 USER aws-prometheus-exporter
 
 # Install application into container
+COPY --from=base /home/build/.venv /home/aws-prometheus-exporter/.venv
+ENV PATH="/home/aws-prometheus-exporter/.venv/bin:$PATH"
 COPY . .
 
 # Run the application
