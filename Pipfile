@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-boto3 = "*"
-prometheus-client = "*"
+boto3 = ">= 1.28.0"
+prometheus-client = ">= 0.17.0"
 
 [dev-packages]
 
