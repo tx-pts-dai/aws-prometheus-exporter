@@ -30,6 +30,10 @@ SCRAPE_INTERVAL=60 # Interval at which scraping metrics happen
 AWS_REGION=eu-central-1 # AWS Region where to look for Subnets
 ```
 
+### Examples
+
+In the [`examples/`](./examples) folder you can find how in DAI, we use the module.
+
 ## Development
 
 After a normal docker build, set AWS credentials as environment variables so that you can run the `./docker-run-local.sh` script to start the app locally.
