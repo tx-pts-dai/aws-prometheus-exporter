@@ -1,0 +1,13 @@
+image_repo: ghcr.io/tx-pts-dai/aws-prometheus-exporter
+image_tag: ${image_tag}
+aws_iam_role_arn: ${aws_iam_role_arn}
+port: 9877
+service:
+  name: aws-prometheus-exporter
+  port: 9877
+
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9877"
+    prometheus.io/path: "/metrics"
