@@ -6,6 +6,7 @@ Current exposed metrics:
 
 - `aws_vpc_subnet_available_ip_address_count`
 - `aws_vpc_subnet_total_ip_address_count`
+- `aws_eventbridge_partner_sources_state`
 
 ## Usage
 
@@ -16,6 +17,7 @@ Under-the-hood it uses [`boto3` authentication mechanisms](https://boto3.amazona
 Required AWS IAM permissions:
 
 - `ec2:DescribeSubnets`
+- `events:ListEventSources`
 
 ### Run
 

@@ -6,7 +6,7 @@ import os
 import re
 import threading
 from wsgiref.simple_server import make_server
-from prometheus_client import make_wsgi_app, Gauge
+from prometheus_client import make_wsgi_app, Gauge, Enum
 import prometheus_client
 import boto3
 
@@ -29,18 +29,25 @@ class AwsExporter:
         self.region = os.getenv("AWS_REGION", "eu-central-1")
         self.polling_interval_seconds = int(os.getenv("SCRAPE_INTERVAL", "60"))
 
-        common_labels = ["vpc", "subnet", "name"]
+        vpc_common_labels = ["vpc", "subnet", "name"]
 
         # Prometheus metrics to collect
         self.available_ip_addresses = Gauge(
             "aws_vpc_subnet_available_ip_address_count",
             "Number of available IPs per subnet",
-            common_labels,
+            vpc_common_labels,
         )
         self.total_ip_addresses = Gauge(
             "aws_vpc_subnet_total_ip_address_count",
             "Total number of IPs per subnet",
-            common_labels,
+            vpc_common_labels,
+        )
+        # https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_DescribeEventSource.html#API_DescribeEventSource_ResponseSyntax
+        self.eventbridge_partner_sources_state = Enum(
+            "aws_eventbridge_partner_sources_state",
+            "State of the EventBridge Partner Sources",
+            states=["ACTIVE", "PENDING", "DELETED"],
+            labelnames=["source_name"],
         )
 
     def get_metrics_periodically(self):
@@ -49,6 +56,7 @@ class AwsExporter:
             self.polling_interval_seconds, self.get_metrics_periodically
         ).start()
         self.expose_subnets_metrics()
+        self.expose_eventbridge_metrics()
 
     @staticmethod
     def aws_tags_to_dict(tags):
@@ -102,7 +110,24 @@ class AwsExporter:
                 vpc=subnet["VpcId"], name=name, subnet=subnet["SubnetId"]
             ).set(total_ip_address_count)
 
-        logger.info("%s Gathered metrics from AWS", datetime.now())
+        logger.info("%s Gathered VPC metrics from AWS", datetime.now())
+
+    def expose_eventbridge_metrics(self):
+        """
+        Get EventBridge Partner Sources state from AWS and return a list with, for each source:
+        - SourceName
+        - State
+        """
+        eventbridge = boto3.client("events", region_name=self.region)
+
+        sources = eventbridge.list_event_sources()
+
+        for source in sources["EventSources"]:
+            self.eventbridge_partner_sources_state.labels(
+                source_name=source["Name"]
+            ).state(source["State"])
+
+        logger.info("%s Gathered EventBridge metrics from AWS", datetime.now())
 
 
 def main():
